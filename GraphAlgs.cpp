@@ -1,6 +1,7 @@
-#include "MatrixGraph.h"
 #include "GraphAlgs.h"
-#include "ListGraph.h"
+
+#include <algorithm>
+using namespace std;
 
 /*
  * Solves the Traveling Salesperson Problem: finding the shortest cycle through a graph that 
@@ -17,6 +18,46 @@
  *     Every pair of nodes u,v  (u != v) has an edge connecting the of weight > 0.
  */
 std::pair<std::vector<NodeID>, EdgeWeight> TSP(Graph* G){
-	std::pair<std::vector<NodeID>, EdgeWeight> kittens;
+	// Shortest distance travelled
+	double distance = 0;
+	// Current distance
+	double curDis;
+	// Order of nodes visited
+	std::vector<NodeID> tour;
+	std::vector<NodeID> curTour;
+	
+	// Sets the NodeIDs to values 0 to n-1
+	for(unsigned int i = 0; i < G->size(); i++){
+		curTour.push_back(i);
+	}
+	tour.operator=(curTour);
+
+	// Calculate the first tour to set distance
+	for(unsigned int i = 0; i < G->size(); i++){
+		if(i == G->size() - 1){
+			distance += G->weight(i, 0);
+		}
+		else{
+			distance += G->weight(i, i+1);
+		}
+	}
+
+	do{
+		curDis = 0;
+		for(unsigned int i = 0; i < G->size(); i++){
+		if(i == G->size() - 1){
+			curDis += G->weight(i, 0);
+		}
+		else{
+			curDis += G->weight(i, i+1);
+		}
+		if(curDis < distance){
+			distance = curDis;
+			tour = curTour;
+		}
+	}
+	}while(next_permutation(curTour.front(), curTour.back()));
+	
+	std::pair<std::vector<NodeID>, double> kittens(tour, distance);
 	return kittens;
 }
