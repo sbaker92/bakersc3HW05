@@ -22,6 +22,4 @@
 
 std::pair<std::vector<NodeID>, EdgeWeight> TSP(Graph* G);
 
-//std::vector<std::vector<NodeID>> permutList(std::vector<NodeID>);
-
-std::vector<NodeID> swap(std::vector<NodeID> list, int a, int b);
+std::pair<std::vector<NodeID>, EdgeWeight> permute(std::vector<NodeID> full, std::vector<NodeID> empty, Graph* G, double distance, std::vector<NodeID> bestTour);

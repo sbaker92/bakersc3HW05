@@ -18,22 +18,20 @@ using namespace std;
  *     Every pair of nodes u,v  (u != v) has an edge connecting the of weight > 0.
  */
 std::pair<std::vector<NodeID>, EdgeWeight> TSP(Graph* G){
-	// Shortest distance travelled
+	// Shortest distance traveled
 	double distance = 0;
-	// Current distance
-	double curDis;
 	// Order of nodes visited
 	std::vector<NodeID> tour;
-	std::vector<NodeID> curTour;
+	std::vector<NodeID> empty;
+	std::vector<NodeID> bestTour;
 	
 	// Sets the NodeIDs to values 0 to n-1
 	for(unsigned int i = 0; i < G->size(); i++){
-		curTour.push_back(i);
+		tour.push_back(i);
 	}
-	tour.operator=(curTour);
 
 	// Calculate the first tour to set distance
-	for(unsigned int i = 0; i < G->size(); i++){
+	for(unsigned int i = 0; i < tour.size(); i++){
 		if(i == G->size() - 1){
 			distance += G->weight(i, 0);
 		}
@@ -41,23 +39,49 @@ std::pair<std::vector<NodeID>, EdgeWeight> TSP(Graph* G){
 			distance += G->weight(i, i+1);
 		}
 	}
+	bestTour.operator=(tour);
 
-	do{
-		curDis = 0;
-		for(unsigned int i = 0; i < G->size(); i++){
-		if(i == G->size() - 1){
-			curDis += G->weight(i, 0);
-		}
-		else{
-			curDis += G->weight(i, i+1);
-		}
-		if(curDis < distance){
-			distance = curDis;
-			tour = curTour;
+	std::pair<std::vector<NodeID>, EdgeWeight> kittens;
+	kittens = permute(tour, empty, G, distance, bestTour);
+	return kittens;
+}
+
+std::pair<std::vector<NodeID>, EdgeWeight> permute(std::vector<NodeID> full, std::vector<NodeID> empty, Graph* G, double distance, std::vector<NodeID> bestTour){
+	std::pair<std::vector<NodeID>, EdgeWeight> panda;
+	if(full.size() == 0){
+		double length = 0;
+		for(int i = 0; i < empty.size(); i++){
+			if(i == empty.size()-1){
+				length += G->weight(empty.at(i), empty.at(0));
+				if(length < distance){
+					distance = length;
+					bestTour.operator=(empty);
+				}
+				panda.first = bestTour;
+				panda.second = distance;
+				return panda;
+			}
+			else if(distance < length){
+				panda.first = bestTour;
+				panda.second = distance;
+				return panda;
+			}
+			else{
+				length += G->weight(empty.at(i), empty.at(i+1));
+			}
 		}
 	}
-	}while(next_permutation(curTour.front(), curTour.back()));
-	
-	std::pair<std::vector<NodeID>, double> kittens(tour, distance);
-	return kittens;
+	else{
+		for(int i = 0; i < full.size(); i++){
+			std::vector<NodeID> temp(full);
+			empty.push_back(full.at(i));
+			panda;
+			full.erase(full.begin() + i);
+			panda.operator=(permute(full, empty, G, distance, bestTour));
+
+			full.operator=(temp);
+			empty.pop_back();
+			return panda;
+		}
+	}
 }
