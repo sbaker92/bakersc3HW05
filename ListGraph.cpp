@@ -1,7 +1,7 @@
 #include "Graph.h"
 #include "ListGraph.h"
 
-// Creates a default list graph
+// Creates a default list graph; logic borrowed from ajduberstein
 ListGraph::ListGraph(int numNodes){
 	num_edges = 0;
 	edgeList = std::vector<EList>();
@@ -17,11 +17,13 @@ ListGraph::~ListGraph(){
 	}
 }
 
-// Adds a weighted edge between nodes u and v with the given weight
+// Adds a weighted edge between nodes u and v with the given weight; logic for duplicate
+// checks taken from ajduberstein, iterator loop borrowed/modified slightly from
+// ajduberstein
 void ListGraph::addEdge(NodeID u, NodeID v, EdgeWeight weight){
 	bool duplicate = false;
 	if(u >= 0 && u < edgeList.size() && v >= 0 && v < edgeList.size() && u!= v && weight > 0){
-		for(std::list<NWPair>::const_iterator i = edgeList.at(u).begin(); i != edgeList.at(u).end(); i++){
+		for(EList::const_iterator i = edgeList.at(u).begin(); i != edgeList.at(u).end(); i++){
 			if(i->first == v && i->second == weight){
 				duplicate = true;
 			}
@@ -34,10 +36,11 @@ void ListGraph::addEdge(NodeID u, NodeID v, EdgeWeight weight){
 	}
 }
 
-// Returns the weight of the edge between two nodes
+// Returns the weight of the edge between two nodes; iterator loop 
+// borrowed/modified slightly from ajduberstein
 EdgeWeight ListGraph::weight(NodeID u, NodeID v) const{
 	if(u >= 0 && u < edgeList.size() && v >= 0 && v < edgeList.size()){
-		for(std::list<NWPair>::const_iterator i = edgeList.at(u).begin(); i != edgeList.at(u).end(); i++){
+		for(EList::const_iterator i = edgeList.at(u).begin(); i != edgeList.at(u).end(); i++){
 			if(i -> first == v){
 				return i -> second;
 			}
