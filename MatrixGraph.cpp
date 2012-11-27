@@ -1,7 +1,8 @@
 #include "Graph.h"
 #include "MatrixGraph.h"
 
-// Creates a matrix with all weights equal to 0
+// Creates a matrix with all weights equal to 0; logic
+// seen in marcusrm's MatrixGraph.cpp
 MatrixGraph::MatrixGraph(unsigned num_nodes){
 	for(int i = 0; i < num_nodes; i++){
 		M.push_back(*new std::vector<EdgeWeight>());
@@ -12,6 +13,7 @@ MatrixGraph::MatrixGraph(unsigned num_nodes){
 }
 
 // The destructor! Because these are important and stuff.
+// Borrowed from marcusrm's MatrixGraph.cpp
 MatrixGraph::~MatrixGraph(){
 	for(int i = 0; i < M.size(); i++){
 		M.at(i).pop_back();
@@ -36,10 +38,11 @@ EdgeWeight MatrixGraph::weight(NodeID u, NodeID v) const{
 		return 0;
 }
 
-// Returns a list of NodeID/EdgeWeight pairs adjacent to the edge
+// Returns a list of NodeID/EdgeWeight pairs adjacent to the edge;
+// logic seen in marcusrm's MatrixGraph.cpp
 std::list<NWPair> MatrixGraph::getAdj(NodeID u) const{
 	if(u >= 0 && u < M.size()){
-		std::list<NWPair>* neighbors = new std::list<NWPair>;
+		EList* neighbors = new EList;
 		for(int i = 0; i < M.at(u).size(); i++){
 			NWPair cur(i, M.at(u).at(i));
 			if(cur.second != 0)
