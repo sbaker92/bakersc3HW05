@@ -1,30 +1,31 @@
 #include "Graph.h"
 #include "MatrixGraph.h"
 
-// Creates a matrix with all weights equal to 0; logic
-// seen in marcusrm's MatrixGraph.cpp
+// Creates a matrix with all weights equal to 0
 MatrixGraph::MatrixGraph(unsigned num_nodes){
+	num_edges = 0;
 	for(int i = 0; i < num_nodes; i++){
 		M.push_back(*new std::vector<EdgeWeight>());
 		for(int j = 0; j < num_nodes; j++){
-			M.at(i).push_back(0);
+			M[i].push_back(0);
 		}
 	}
 }
 
 // The destructor! Because these are important and stuff.
-// Borrowed from marcusrm's MatrixGraph.cpp
 MatrixGraph::~MatrixGraph(){
 	for(int i = 0; i < M.size(); i++){
-		M.at(i).pop_back();
+		for(int j = 0; j < M.size(); j++){
+			M[i].pop_back();
+		}
 	}
 }
 
 // Adds a weighted edge between nodes u and v with the given weight
 void MatrixGraph::addEdge(NodeID u, NodeID v, EdgeWeight weight){
-	if(u >= 0 && u < M.size() && v >= 0 && v < M.size() && u!= v && M.at(u).at(v) == 0 && M.at(v).at(u) == 0 && weight > 0){
-		M.at(u).at(v) = weight;
-		M.at(v).at(u) = weight;
+	if(u >= 0 && u < M.size() && v >= 0 && v < M.size() && u!= v && M[u][v] == 0 && M[v][u] == 0 && weight > 0){
+		M[u][v] = weight;
+		M[v][u] = weight;
 		num_edges++;
 	}
 }
@@ -32,7 +33,7 @@ void MatrixGraph::addEdge(NodeID u, NodeID v, EdgeWeight weight){
 // Returns the weight of the edge between two nodes
 EdgeWeight MatrixGraph::weight(NodeID u, NodeID v) const{
 	if(u >= 0 && u < M.size() && v >= 0 && v < M.size()){
-		return M.at(u).at(v);
+		return M[u][v];
 	}
 	else
 		return 0;
@@ -43,8 +44,8 @@ EdgeWeight MatrixGraph::weight(NodeID u, NodeID v) const{
 std::list<NWPair> MatrixGraph::getAdj(NodeID u) const{
 	if(u >= 0 && u < M.size()){
 		EList* neighbors = new EList;
-		for(int i = 0; i < M.at(u).size(); i++){
-			NWPair cur(i, M.at(u).at(i));
+		for(int i = 0; i < M[u].size(); i++){
+			NWPair cur(i, M[u][i]);
 			if(cur.second != 0)
 				neighbors->push_back(cur);
 		}
@@ -67,17 +68,5 @@ unsigned MatrixGraph::size() const{
 
 // Returns the number of edges in the graph
 unsigned MatrixGraph::numEdges() const{
-	// For some reason, returning num_edges caused test 9 to
-	// fail, so I switched to this because it works. I have
-	// no idea why returning num_edges works for ListGraph, 
-	// but not MatrixGraph.
-	int edges = 0;
-	for(int i = 0; i < M.size(); i++){
-		for(int j = i+1; j < M.at(i).size(); j++){
-			if(M.at(i).at(j) != 0)
-				edges++;
-		}
-	}
-
-	return edges;
+	return num_edges;
 }
